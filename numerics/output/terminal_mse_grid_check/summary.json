@@ -1,0 +1,178 @@
+{
+  "configuration": {
+    "paths": 50000,
+    "batch_size": 1000,
+    "coarse_steps": 256,
+    "fine_steps": 512,
+    "maturity": 0.25,
+    "seed": 20260907,
+    "strike": 1.0,
+    "shared_sources": "fine Brownian normals aggregated; identical Poisson thresholds and marks"
+  },
+  "diagnostic": {
+    "256": {
+      "stock_mean": 0.9998632255793535,
+      "stock_mean_se": 0.0002640543245980938,
+      "payoff_mean": 0.019913216535600405,
+      "payoff_mean_se": 0.00010516345324188434,
+      "reference_fourier_capital": 0.019435583681410185,
+      "black_scholes_implied_vol": 0.09744520483787694,
+      "jump_count": 193
+    },
+    "512": {
+      "stock_mean": 0.9997966501668992,
+      "stock_mean_se": 0.00026434593892224164,
+      "payoff_mean": 0.019848779394683966,
+      "payoff_mean_se": 0.00010513533957695671,
+      "reference_fourier_capital": 0.01949096299956743,
+      "black_scholes_implied_vol": 0.0977229181977971,
+      "jump_count": 188
+    },
+    "fine_minus_coarse_payoff_mean": -6.443714091644268e-05,
+    "fine_minus_coarse_payoff_mean_se": 0.0001104113128638224
+  },
+  "results": [
+    {
+      "steps": 256,
+      "strategy": "No hedge",
+      "capital_from_method": 0.019435583681410185,
+      "best_sample_capital_for_strategy": 0.019913216535600405,
+      "centered_terminal_mse": 0.000552956535536002,
+      "centered_terminal_mse_se": 1.3228099605389342e-05,
+      "variance_reduction_vs_no_hedge": 0.0,
+      "paired_mse_improvement_vs_no_hedge": 0.0,
+      "paired_mse_improvement_se": 0.0,
+      "method_capital_terminal_mse": 0.000553184668679404,
+      "method_capital_terminal_mse_se": 1.3270190456982662e-05,
+      "method_capital_mse_vs_reference_capital": 0.000553184668679404
+    },
+    {
+      "steps": 256,
+      "strategy": "Black--Scholes delta (implied-vol calibrated)",
+      "capital_from_method": 0.019435583681410185,
+      "best_sample_capital_for_strategy": 0.02002412457284115,
+      "centered_terminal_mse": 0.0001352915840051939,
+      "centered_terminal_mse_se": 1.272997587434146e-05,
+      "variance_reduction_vs_no_hedge": 0.7553305272465031,
+      "paired_mse_improvement_vs_no_hedge": 0.00041766495153080813,
+      "paired_mse_improvement_se": 1.7803325032707352e-05,
+      "method_capital_terminal_mse": 0.00013563796438608025,
+      "method_capital_terminal_mse_se": 1.2769420885204434e-05,
+      "method_capital_mse_vs_reference_capital": 0.00013563796438608025
+    },
+    {
+      "steps": 256,
+      "strategy": "Kernel hedge eps/T=0.015625, R=80",
+      "capital_from_method": 0.02067367409216636,
+      "best_sample_capital_for_strategy": 0.020013222696588926,
+      "centered_terminal_mse": 9.159534033212875e-05,
+      "centered_terminal_mse_se": 5.509857644356157e-06,
+      "variance_reduction_vs_no_hedge": 0.8343534537604446,
+      "paired_mse_improvement_vs_no_hedge": 0.00046136119520387333,
+      "paired_mse_improvement_se": 1.3893726886624192e-05,
+      "method_capital_terminal_mse": 9.203153637804892e-05,
+      "method_capital_terminal_mse_se": 5.477291850873593e-06,
+      "method_capital_mse_vs_reference_capital": 9.192900716398542e-05
+    },
+    {
+      "steps": 256,
+      "strategy": "Unshifted-kernel hedge, R=80",
+      "capital_from_method": 0.019435583681410185,
+      "best_sample_capital_for_strategy": 0.02001212021595772,
+      "centered_terminal_mse": 9.184977562622523e-05,
+      "centered_terminal_mse_se": 5.424206907685115e-06,
+      "variance_reduction_vs_no_hedge": 0.8338933176055299,
+      "paired_mse_improvement_vs_no_hedge": 0.00046110675990977673,
+      "paired_mse_improvement_se": 1.386958898809061e-05,
+      "method_capital_terminal_mse": 9.21821700018933e-05,
+      "method_capital_terminal_mse_se": 5.452382305946242e-06,
+      "method_capital_mse_vs_reference_capital": 9.21821700018933e-05
+    },
+    {
+      "steps": 512,
+      "strategy": "No hedge",
+      "capital_from_method": 0.01949096299956743,
+      "best_sample_capital_for_strategy": 0.019848779394683966,
+      "centered_terminal_mse": 0.0005526609279584721,
+      "centered_terminal_mse_se": 1.4166245353144437e-05,
+      "variance_reduction_vs_no_hedge": 0.0,
+      "paired_mse_improvement_vs_no_hedge": 0.0,
+      "paired_mse_improvement_se": 0.0,
+      "method_capital_terminal_mse": 0.0005527889605310862,
+      "method_capital_terminal_mse_se": 1.4196922764503301e-05,
+      "method_capital_mse_vs_reference_capital": 0.0005527889605310862
+    },
+    {
+      "steps": 512,
+      "strategy": "Black--Scholes delta (implied-vol calibrated)",
+      "capital_from_method": 0.01949096299956743,
+      "best_sample_capital_for_strategy": 0.01989890189884472,
+      "centered_terminal_mse": 0.00015117863941609632,
+      "centered_terminal_mse_se": 1.5134295881590367e-05,
+      "variance_reduction_vs_no_hedge": 0.7264531799370189,
+      "paired_mse_improvement_vs_no_hedge": 0.0004014822885423756,
+      "paired_mse_improvement_se": 1.945117779991109e-05,
+      "method_capital_terminal_mse": 0.00015134505356163993,
+      "method_capital_terminal_mse_se": 1.5165584144327433e-05,
+      "method_capital_mse_vs_reference_capital": 0.00015134505356163993
+    },
+    {
+      "steps": 512,
+      "strategy": "Kernel hedge eps/T=0.015625, R=80",
+      "capital_from_method": 0.020722334232626705,
+      "best_sample_capital_for_strategy": 0.0198820376117017,
+      "centered_terminal_mse": 9.76575725222904e-05,
+      "centered_terminal_mse_se": 7.016877714836721e-06,
+      "variance_reduction_vs_no_hedge": 0.8232956817066167,
+      "paired_mse_improvement_vs_no_hedge": 0.00045500335543618157,
+      "paired_mse_improvement_se": 1.5136697016805976e-05,
+      "method_capital_terminal_mse": 9.836367093342838e-05,
+      "method_capital_terminal_mse_se": 6.97089750357689e-06,
+      "method_capital_mse_vs_reference_capital": 9.781051187454638e-05
+    },
+    {
+      "steps": 512,
+      "strategy": "Unshifted-kernel hedge, R=80",
+      "capital_from_method": 0.01949096299956743,
+      "best_sample_capital_for_strategy": 0.0198785780239445,
+      "centered_terminal_mse": 9.706823165462278e-05,
+      "centered_terminal_mse_se": 6.670237087530903e-06,
+      "variance_reduction_vs_no_hedge": 0.824362051406108,
+      "paired_mse_improvement_vs_no_hedge": 0.00045559269630384916,
+      "paired_mse_improvement_se": 1.5000160338787563e-05,
+      "method_capital_terminal_mse": 9.72184770617456e-05,
+      "method_capital_terminal_mse_se": 6.691267874073525e-06,
+      "method_capital_mse_vs_reference_capital": 9.72184770617456e-05
+    }
+  ],
+  "paired_grid_differences": [
+    {
+      "strategy": "No hedge",
+      "fine_minus_coarse_method_mse": -3.9570814831785747e-07,
+      "fine_minus_coarse_method_mse_se": 1.8211954188032873e-05,
+      "fine_minus_coarse_centered_mse": -2.9560757753008585e-07,
+      "fine_minus_coarse_centered_mse_se": 1.8174550307368243e-05
+    },
+    {
+      "strategy": "Black--Scholes delta (implied-vol calibrated)",
+      "fine_minus_coarse_method_mse": 1.5707089175559678e-05,
+      "fine_minus_coarse_method_mse_se": 1.3349695049051112e-05,
+      "fine_minus_coarse_centered_mse": 1.5887055410902465e-05,
+      "fine_minus_coarse_centered_mse_se": 1.3320682043384303e-05
+    },
+    {
+      "strategy": "Kernel hedge eps/T=0.015625, R=80",
+      "fine_minus_coarse_method_mse": 6.332134555379471e-06,
+      "fine_minus_coarse_method_mse_se": 6.213679263051705e-06,
+      "fine_minus_coarse_centered_mse": 6.0622321901616675e-06,
+      "fine_minus_coarse_centered_mse_se": 6.243497753307146e-06
+    },
+    {
+      "strategy": "Unshifted-kernel hedge, R=80",
+      "fine_minus_coarse_method_mse": 5.036307059852318e-06,
+      "fine_minus_coarse_method_mse_se": 6.047430522888336e-06,
+      "fine_minus_coarse_centered_mse": 5.2184560283975645e-06,
+      "fine_minus_coarse_centered_mse_se": 6.0308180634103366e-06
+    }
+  ]
+}

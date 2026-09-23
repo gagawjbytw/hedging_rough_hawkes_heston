@@ -37,3 +37,29 @@ python3 numerics/original_market_stability.py \
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
 python3 numerics/test_original_market_stability.py
 ```
+
+## Terminal-loss and paired grid check
+
+The terminal-loss experiment compares each Fourier policy with an unhedged
+position and a Black--Scholes delta hedge on the same original-market paths:
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+python3 numerics/hedging_performance_experiment.py
+```
+
+Its default run uses 50,000 paths and 512 steps, and writes
+`numerics/output/hedging_performance_experiment/summary.json` and
+`terminal_mse.csv` in the same directory.
+
+The paired grid check evaluates the final regularized policy, its unshifted
+reference, and both benchmarks at 256 and 512 time steps. It aggregates the
+fine Brownian normals in adjacent pairs and reuses the Poisson thresholds and
+marks on both grids. The default fine-grid stream matches the 50,000-path
+terminal-loss run. Outputs are written to
+`numerics/output/terminal_mse_grid_check/`.
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+python3 numerics/terminal_mse_grid_check.py
+```

@@ -1,0 +1,283 @@
+{
+  "configuration": {
+    "paths": 50000,
+    "batch_size": 1000,
+    "steps": 512,
+    "maturity": 0.25,
+    "seed": 20260907,
+    "strike": 1.0,
+    "stock_mean": 0.9997966501668992,
+    "stock_mean_se": 0.00026434593892224164,
+    "payoff_mean_mc": 0.019848779394683966,
+    "payoff_mean_se": 0.00010513533957695671,
+    "unshifted_R80_fourier_capital": 0.01949096299956743,
+    "black_scholes_implied_vol": 0.0977229181977971,
+    "mean_jumps": 0.00376,
+    "total_jumps": 188
+  },
+  "results": [
+    {
+      "strategy": "No hedge",
+      "capital_from_method": 0.01949096299956743,
+      "best_sample_capital_for_strategy": 0.019848779394683966,
+      "centered_terminal_mse": 0.0005526609279584721,
+      "centered_terminal_mse_se": 1.4166245353144437e-05,
+      "variance_reduction_vs_no_hedge": 0.0,
+      "paired_mse_improvement_vs_no_hedge": 0.0,
+      "paired_mse_improvement_se": 0.0,
+      "method_capital_terminal_mse": 0.0005527889605310862,
+      "method_capital_terminal_mse_se": 1.4196922764503301e-05,
+      "method_capital_mse_vs_reference_capital": 0.0005527889605310862
+    },
+    {
+      "strategy": "Kernel hedge eps/T=0.25, R=5",
+      "capital_from_method": 0.06698635329350822,
+      "best_sample_capital_for_strategy": 0.01993592653331862,
+      "centered_terminal_mse": 0.0002746241495154995,
+      "centered_terminal_mse_se": 7.801172355623143e-06,
+      "variance_reduction_vs_no_hedge": 0.5030874526810493,
+      "paired_mse_improvement_vs_no_hedge": 0.00027803677844297247,
+      "paired_mse_improvement_se": 1.4632092641844925e-05,
+      "method_capital_terminal_mse": 0.0024883668078314646,
+      "method_capital_terminal_mse_se": 6.605786540417957e-06,
+      "method_capital_mse_vs_reference_capital": 0.00027482214206186784,
+      "epsilon_over_T": 0.25,
+      "cutoff": 5.0
+    },
+    {
+      "strategy": "Kernel hedge eps/T=0.125, R=10",
+      "capital_from_method": 0.037819293396353704,
+      "best_sample_capital_for_strategy": 0.01990754691087212,
+      "centered_terminal_mse": 0.0001786046179786345,
+      "centered_terminal_mse_se": 6.095989417598635e-06,
+      "variance_reduction_vs_no_hedge": 0.6768278542172332,
+      "paired_mse_improvement_vs_no_hedge": 0.0003740563099798374,
+      "paired_mse_improvement_se": 1.4404645867349902e-05,
+      "method_capital_terminal_mse": 0.0004994352801387964,
+      "method_capital_terminal_mse_se": 5.245268502151426e-06,
+      "method_capital_mse_vs_reference_capital": 0.00017877816013379244,
+      "epsilon_over_T": 0.125,
+      "cutoff": 10.0
+    },
+    {
+      "strategy": "Kernel hedge eps/T=0.0625, R=20",
+      "capital_from_method": 0.025403019585960473,
+      "best_sample_capital_for_strategy": 0.019871156910928365,
+      "centered_terminal_mse": 0.0001231373662386057,
+      "centered_terminal_mse_se": 5.444591844864737e-06,
+      "variance_reduction_vs_no_hedge": 0.777191836785939,
+      "paired_mse_improvement_vs_no_hedge": 0.0004295235617198663,
+      "paired_mse_improvement_se": 1.4398179760984222e-05,
+      "method_capital_terminal_mse": 0.0001537388708940191,
+      "method_capital_terminal_mse_se": 5.162690041518337e-06,
+      "method_capital_mse_vs_reference_capital": 0.00012328191364884163,
+      "epsilon_over_T": 0.0625,
+      "cutoff": 20.0
+    },
+    {
+      "strategy": "Kernel hedge eps/T=0.03125, R=40",
+      "capital_from_method": 0.021388795151113693,
+      "best_sample_capital_for_strategy": 0.019875544769989335,
+      "centered_terminal_mse": 0.00010225713815436029,
+      "centered_terminal_mse_se": 6.064235976509063e-06,
+      "variance_reduction_vs_no_hedge": 0.8149731001753682,
+      "paired_mse_improvement_vs_no_hedge": 0.00045040378980411164,
+      "paired_mse_improvement_se": 1.4720150699302051e-05,
+      "method_capital_terminal_mse": 0.00010454706487033331,
+      "method_capital_terminal_mse_se": 5.9842146362586444e-06,
+      "method_capital_mse_vs_reference_capital": 0.00010240504129250116,
+      "epsilon_over_T": 0.03125,
+      "cutoff": 40.0
+    },
+    {
+      "strategy": "Kernel hedge eps/T=0.015625, R=80",
+      "capital_from_method": 0.020722334232626705,
+      "best_sample_capital_for_strategy": 0.0198820376117017,
+      "centered_terminal_mse": 9.76575725222904e-05,
+      "centered_terminal_mse_se": 7.016877714836721e-06,
+      "variance_reduction_vs_no_hedge": 0.8232956817066167,
+      "paired_mse_improvement_vs_no_hedge": 0.00045500335543618157,
+      "paired_mse_improvement_se": 1.5136697016805976e-05,
+      "method_capital_terminal_mse": 9.836367093342838e-05,
+      "method_capital_terminal_mse_se": 6.97089750357689e-06,
+      "method_capital_mse_vs_reference_capital": 9.781051187454638e-05,
+      "epsilon_over_T": 0.015625,
+      "cutoff": 80.0
+    },
+    {
+      "strategy": "Unshifted-kernel hedge, R=80",
+      "capital_from_method": 0.01949096299956743,
+      "best_sample_capital_for_strategy": 0.0198785780239445,
+      "centered_terminal_mse": 9.706823165462278e-05,
+      "centered_terminal_mse_se": 6.670237087530903e-06,
+      "variance_reduction_vs_no_hedge": 0.824362051406108,
+      "paired_mse_improvement_vs_no_hedge": 0.00045559269630384916,
+      "paired_mse_improvement_se": 1.5000160338787563e-05,
+      "method_capital_terminal_mse": 9.72184770617456e-05,
+      "method_capital_terminal_mse_se": 6.691267874073525e-06,
+      "method_capital_mse_vs_reference_capital": 9.72184770617456e-05
+    },
+    {
+      "strategy": "Black--Scholes delta (implied-vol calibrated)",
+      "capital_from_method": 0.01949096299956743,
+      "best_sample_capital_for_strategy": 0.01989890189884472,
+      "centered_terminal_mse": 0.00015117863941609632,
+      "centered_terminal_mse_se": 1.5134295881590367e-05,
+      "variance_reduction_vs_no_hedge": 0.7264531799370189,
+      "paired_mse_improvement_vs_no_hedge": 0.0004014822885423756,
+      "paired_mse_improvement_se": 1.945117779991109e-05,
+      "method_capital_terminal_mse": 0.00015134505356163993,
+      "method_capital_terminal_mse_se": 1.5165584144327433e-05,
+      "method_capital_mse_vs_reference_capital": 0.00015134505356163993
+    }
+  ],
+  "paired_centered_mse_comparisons": [
+    {
+      "candidate": "No hedge",
+      "benchmark": "Black--Scholes delta (implied-vol calibrated)",
+      "mse_improvement_candidate_minus_benchmark": -0.0004014822885423756,
+      "paired_se": 1.945117779991109e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "No hedge",
+      "benchmark": "Unshifted-kernel hedge, R=80",
+      "mse_improvement_candidate_minus_benchmark": -0.00045559269630384916,
+      "paired_se": 1.5000160338787563e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.25, R=5",
+      "benchmark": "No hedge",
+      "mse_improvement_candidate_minus_benchmark": 0.00027803677844297247,
+      "paired_se": 1.4632092641844925e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.25, R=5",
+      "benchmark": "Black--Scholes delta (implied-vol calibrated)",
+      "mse_improvement_candidate_minus_benchmark": -0.00012344551009940311,
+      "paired_se": 1.2373323700125239e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.25, R=5",
+      "benchmark": "Unshifted-kernel hedge, R=80",
+      "mse_improvement_candidate_minus_benchmark": -0.00017755591786087672,
+      "paired_se": 5.543708029770288e-06,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.125, R=10",
+      "benchmark": "No hedge",
+      "mse_improvement_candidate_minus_benchmark": 0.0003740563099798374,
+      "paired_se": 1.4404645867349902e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.125, R=10",
+      "benchmark": "Black--Scholes delta (implied-vol calibrated)",
+      "mse_improvement_candidate_minus_benchmark": -2.7425978562538183e-05,
+      "paired_se": 1.1639152547513773e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.125, R=10",
+      "benchmark": "Unshifted-kernel hedge, R=80",
+      "mse_improvement_candidate_minus_benchmark": -8.153638632401173e-05,
+      "paired_se": 3.4283883372737767e-06,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.0625, R=20",
+      "benchmark": "No hedge",
+      "mse_improvement_candidate_minus_benchmark": 0.0004295235617198663,
+      "paired_se": 1.4398179760984222e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.0625, R=20",
+      "benchmark": "Black--Scholes delta (implied-vol calibrated)",
+      "mse_improvement_candidate_minus_benchmark": 2.8041273177490643e-05,
+      "paired_se": 1.1421233947746712e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.0625, R=20",
+      "benchmark": "Unshifted-kernel hedge, R=80",
+      "mse_improvement_candidate_minus_benchmark": -2.6069134583982926e-05,
+      "paired_se": 2.1668127906210524e-06,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.03125, R=40",
+      "benchmark": "No hedge",
+      "mse_improvement_candidate_minus_benchmark": 0.00045040378980411164,
+      "paired_se": 1.4720150699302051e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.03125, R=40",
+      "benchmark": "Black--Scholes delta (implied-vol calibrated)",
+      "mse_improvement_candidate_minus_benchmark": 4.892150126173605e-05,
+      "paired_se": 1.0903450397957234e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.03125, R=40",
+      "benchmark": "Unshifted-kernel hedge, R=80",
+      "mse_improvement_candidate_minus_benchmark": -5.188906499737523e-06,
+      "paired_se": 8.841932099376991e-07,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.015625, R=80",
+      "benchmark": "No hedge",
+      "mse_improvement_candidate_minus_benchmark": 0.00045500335543618157,
+      "paired_se": 1.5136697016805976e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.015625, R=80",
+      "benchmark": "Black--Scholes delta (implied-vol calibrated)",
+      "mse_improvement_candidate_minus_benchmark": 5.3521066893805936e-05,
+      "paired_se": 1.037791020088498e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Kernel hedge eps/T=0.015625, R=80",
+      "benchmark": "Unshifted-kernel hedge, R=80",
+      "mse_improvement_candidate_minus_benchmark": -5.8934086766763e-07,
+      "paired_se": 4.5949678402815504e-07,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Unshifted-kernel hedge, R=80",
+      "benchmark": "No hedge",
+      "mse_improvement_candidate_minus_benchmark": 0.00045559269630384916,
+      "paired_se": 1.5000160338787563e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Unshifted-kernel hedge, R=80",
+      "benchmark": "Black--Scholes delta (implied-vol calibrated)",
+      "mse_improvement_candidate_minus_benchmark": 5.411040776147357e-05,
+      "paired_se": 1.0505935931278076e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Black--Scholes delta (implied-vol calibrated)",
+      "benchmark": "No hedge",
+      "mse_improvement_candidate_minus_benchmark": 0.0004014822885423756,
+      "paired_se": 1.945117779991109e-05,
+      "positive_means_candidate_is_better": true
+    },
+    {
+      "candidate": "Black--Scholes delta (implied-vol calibrated)",
+      "benchmark": "Unshifted-kernel hedge, R=80",
+      "mse_improvement_candidate_minus_benchmark": -5.411040776147357e-05,
+      "paired_se": 1.0505935931278076e-05,
+      "positive_means_candidate_is_better": true
+    }
+  ]
+}
