@@ -1,4 +1,4 @@
-# Decision-Consistent Variance-Optimal Hedging under Rough Volatility and Self-Exciting Jumps
+# Variance-Optimal Hedging in the Rough Hawkes--Heston Model
 
 This repository contains the numerical implementation and simulation outputs
 accompanying the manuscript. The experiments cover original-market stability,
