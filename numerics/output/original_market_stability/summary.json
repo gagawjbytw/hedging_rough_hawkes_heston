@@ -7,13 +7,6 @@
     "maturity": 0.25,
     "seed": 20260907,
     "fourier_order_per_panel": 4,
-    "cutoffs": [
-      5.0,
-      10.0,
-      20.0,
-      40.0,
-      80.0
-    ],
     "epsilon_over_T": [
       0.25,
       0.125,
@@ -33,166 +26,17 @@
     "v0": 0.0079,
     "s0": 1.0
   },
-  "fine_grid": {
-    "stock_mean": 1.0007836691655927,
-    "stock_se": 0.0007856638522867564,
-    "running_max_adjustment_fraction": 0.618201953125,
-    "jump_count": 8,
-    "history_reference_gap": 3.3306690738754696e-16,
-    "terminal_memory_mean_abs_fixed_cutoff": [
-      0.016518294878785707,
-      0.0024053484755663258,
-      0.0028220148793567444,
-      0.003295450482081893,
-      0.003841606399476082,
-      0.004493553335678625
-    ],
-    "reference_capital_by_cutoff": [
-      0.06618011232090504,
-      0.03666626926108174,
-      0.02393574440397228,
-      0.019857540372771987,
-      0.01949096299956743
-    ],
-    "kernel_l1_error": [
-      0.19367297543891163,
-      0.1466555941233162,
-      0.10827917093561922,
-      0.07850045302753432,
-      0.056184262507497786
-    ],
-    "riccati_sup_error_fixed_cutoff": [
-      11.304946869517488,
-      9.614073423028056,
-      8.014145895536213,
-      6.548911363321813,
-      5.251143355796285
-    ],
-    "memory_l1_sup_fixed_cutoff": [
-      0.035392046499865694,
-      0.025335773461917902,
-      0.01792816251538413,
-      0.012657500335820925,
-      0.008962637066912152
-    ],
-    "clip_fraction": [
-      0.00208544921875,
-      0.003463356370192308,
-      0.005647400841346154,
-      0.008926570012019231,
-      0.012973347355769231
-    ],
-    "fixed_cutoff_strategy_l2": [
-      2.447271495258005e-06,
-      1.4108385013383987e-06,
-      7.805216625876941e-07,
-      4.17135227275168e-07,
-      2.170420406414611e-07
-    ],
-    "fixed_cutoff_strategy_l2_se": [
-      1.7320225430383592e-07,
-      1.1247339095126075e-07,
-      6.491954633581138e-08,
-      3.384169923250502e-08,
-      1.6719368269864406e-08
-    ],
-    "fixed_cutoff_gain_sup": [
-      3.586981231696045e-06,
-      2.090585605371157e-06,
-      1.1715946705552179e-06,
-      6.326912436351615e-07,
-      3.306370250520448e-07
-    ],
-    "fixed_cutoff_gain_sup_se": [
-      3.170930659560868e-07,
-      2.211110420048685e-07,
-      1.3833172609106299e-07,
-      7.7792597704769e-08,
-      4.074870852056349e-08
-    ],
-    "diagonal": [
-      {
-        "epsilon_over_T": 0.25,
-        "cutoff": 5.0,
-        "capital": 0.06698635329350822,
-        "capital_gap_squared": 0.0022558120991737645,
-        "strategy_l2_reference": 0.0001765962182783677,
-        "strategy_l2_reference_se": 3.2719449020633348e-06,
-        "gain_sup_reference": 0.00028190681796009935,
-        "gain_sup_reference_se": 1.013510064291895e-05,
-        "capital_strategy_distance_squared": 0.0024324083174521323
-      },
-      {
-        "epsilon_over_T": 0.125,
-        "cutoff": 10.0,
-        "capital": 0.037819293396353704,
-        "capital_gap_squared": 0.0003359276951337597,
-        "strategy_l2_reference": 8.128631054903697e-05,
-        "strategy_l2_reference_se": 1.2729385840767644e-06,
-        "gain_sup_reference": 0.00011787155453309404,
-        "gain_sup_reference_se": 4.352615184552132e-06,
-        "capital_strategy_distance_squared": 0.0004172140056827967
-      },
-      {
-        "epsilon_over_T": 0.0625,
-        "cutoff": 20.0,
-        "capital": 0.025403019585960473,
-        "capital_gap_squared": 3.495241308071337e-05,
-        "strategy_l2_reference": 2.6732034355012956e-05,
-        "strategy_l2_reference_se": 3.601133527586374e-07,
-        "gain_sup_reference": 3.657612890406689e-05,
-        "gain_sup_reference_se": 2.032544834315565e-06,
-        "capital_strategy_distance_squared": 6.168444743572633e-05
-      },
-      {
-        "epsilon_over_T": 0.03125,
-        "cutoff": 40.0,
-        "capital": 0.021388795151113693,
-        "capital_gap_squared": 3.6017668754427206e-06,
-        "strategy_l2_reference": 5.162983766197336e-06,
-        "strategy_l2_reference_se": 7.324748717815338e-08,
-        "gain_sup_reference": 7.135919318076929e-06,
-        "gain_sup_reference_se": 4.289352388246746e-07,
-        "capital_strategy_distance_squared": 8.764750641640056e-06
-      },
-      {
-        "epsilon_over_T": 0.015625,
-        "cutoff": 80.0,
-        "capital": 0.020722334232626705,
-        "capital_gap_squared": 1.5162751136059198e-06,
-        "strategy_l2_reference": 6.196622373726819e-07,
-        "strategy_l2_reference_se": 1.8072559188229654e-08,
-        "gain_sup_reference": 8.090247368573297e-07,
-        "gain_sup_reference_se": 5.452488412031073e-08,
-        "capital_strategy_distance_squared": 2.1359373509786016e-06
-      }
-    ]
-  },
-  "grid_comparison": [
+  "stock_diagnostics": [
     {
       "steps": 256,
-      "epsilon_over_T": 0.03125,
-      "cutoff": 20.0,
-      "strategy_l2_same_cutoff": 3.866727733048715e-07,
-      "strategy_l2_same_cutoff_se": 6.817852453252849e-09,
-      "gain_sup_same_cutoff": 5.445948002202107e-07,
-      "gain_sup_same_cutoff_se": 2.6589793646593346e-08,
       "stock_mean": 1.0002869010609554,
       "stock_se": 0.0007880738087954235,
-      "running_max_adjustment_fraction": 0.582684375,
       "jump_count": 9
     },
     {
       "steps": 512,
-      "epsilon_over_T": 0.03125,
-      "cutoff": 20.0,
-      "strategy_l2_same_cutoff": 4.17135227275168e-07,
-      "strategy_l2_same_cutoff_se": 3.384169923250502e-08,
-      "gain_sup_same_cutoff": 6.326912436351615e-07,
-      "gain_sup_same_cutoff_se": 7.7792597704769e-08,
       "stock_mean": 1.0007836691655927,
       "stock_se": 0.0007856638522867564,
-      "running_max_adjustment_fraction": 0.618201953125,
       "jump_count": 8
     }
   ]

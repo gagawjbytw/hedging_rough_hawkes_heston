@@ -1,0 +1,22 @@
+{
+  "python": "3.12.7",
+  "packages": {
+    "numpy": "1.26.4",
+    "scipy": "1.13.1",
+    "pandas": "2.2.3",
+    "matplotlib": "3.9.2",
+    "numba": "0.60.0"
+  },
+  "sha256": {
+    "numerics/calibrate_public_spx.py": "83c591452fb120d7661e278449204e51888ffcb00d58c570d2aec44392307dd7",
+    "numerics/original_market_stability.py": "0a3427a349ecd7346945af0d9737e8682e6c7c56d7401960e15415893f296a1e",
+    "numerics/plot_hedging_convergence_paper.py": "2790116a1898c1b70d7555cce993cda81bd5e5fbfdea4c89545170251c7e82a9",
+    "numerics/plot_public_spx_paper.py": "85f527dc40731ee9908e0dda023868023dfd91e18f89eca45ebd9652f1f33da5",
+    "numerics/summarize_public_spx.py": "206cba91b2ff6de033d5d6b600f22ab70c077c3c7b79eb5812dfb0ad0e2269f3",
+    "numerics/terminal_mse_grid_check.py": "4265ea24ba1113e852cc251f2ff8f8e9dbe87155231410792f73b4628f8fc541",
+    "numerics/test_original_market_stability.py": "ee545de2fa57024a6e65e065e3b7fe0df76f7242d9750e2aed85b66108c649e9",
+    "numerics/test_public_spx_calibration.py": "fed7ef1ab2ba1efae48440a9aa50ca81207f6592e49eaa1acba67894fe04edef",
+    "arxiv/main.tex": "14c4585864d37bdea55506ad365ee75dfa785081aec62fdd2a29a642bd5638ed",
+    "Bondi.pdf": "c3463597d4a0ed5f9541db2524064ba35cd2c3e411335aa3c46365b34b0982b1"
+  }
+}

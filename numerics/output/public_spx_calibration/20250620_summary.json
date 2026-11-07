@@ -1,0 +1,391 @@
+{
+  "date": "20250620",
+  "data": {
+    "raw_rows": 9999,
+    "eligible_rows": 4036,
+    "selected_rows": 213,
+    "fit_times": [
+      0.032,
+      0.052,
+      0.072,
+      0.092,
+      0.156
+    ],
+    "held_time": 0.116,
+    "split_counts": {
+      "train": 132,
+      "strike_holdout": 44,
+      "maturity_holdout": 37
+    }
+  },
+  "settings": {
+    "dates": [
+      "20250620"
+    ],
+    "starts": 3,
+    "steps": 256,
+    "cutoff": 800.0,
+    "max_nfev": 160,
+    "skip_existing": false
+  },
+  "transformed_parameter_bounds": {
+    "lower": [
+      0.501,
+      -0.995,
+      -50.0,
+      -9.210340371976182,
+      -13.815510557964274,
+      -9.210340371976182,
+      0.0
+    ],
+    "upper": [
+      0.999,
+      0.995,
+      20.0,
+      3.6888794541139363,
+      1.791759469228055,
+      -0.5108256237659907,
+      3.0
+    ]
+  },
+  "models": {
+    "rough_heston": {
+      "parameters": {
+        "alpha": 0.5010000000138921,
+        "rho": -0.7435230644784403,
+        "b": -0.7755931156012995,
+        "c": 0.14425968176095197,
+        "gamma": 0.057873673135272204,
+        "v0": 0.03223422043437877,
+        "Lambda": 0.0
+      },
+      "parameter_count": 6,
+      "multistart": [
+        {
+          "start": 0,
+          "relative_rmse_pct": 4.499862228195061,
+          "nfev": 13,
+          "status": 3,
+          "message": "`xtol` termination condition is satisfied.",
+          "optimality": 2.1939285134376323e-05,
+          "seconds": 2.187740874942392,
+          "parameters": {
+            "alpha": 0.5010000046091561,
+            "rho": -0.7435250391646605,
+            "b": -0.7757440960811767,
+            "c": 0.14426910093675108,
+            "gamma": 0.057880877702916195,
+            "v0": 0.03223395616881508,
+            "Lambda": 0.0
+          },
+          "active_mask": [
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "start": 1,
+          "relative_rmse_pct": 4.4998622300424165,
+          "nfev": 17,
+          "status": 2,
+          "message": "`ftol` termination condition is satisfied.",
+          "optimality": 8.74184137968254e-06,
+          "seconds": 2.5351691250689328,
+          "parameters": {
+            "alpha": 0.5010000000003402,
+            "rho": -0.7435255566265829,
+            "b": -0.7756391597334464,
+            "c": 0.14426341891212222,
+            "gamma": 0.05787671059220192,
+            "v0": 0.03223399990141319,
+            "Lambda": 0.0
+          },
+          "active_mask": [
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "start": 2,
+          "relative_rmse_pct": 4.499862227348755,
+          "nfev": 16,
+          "status": 4,
+          "message": "Both `ftol` and `xtol` termination conditions are satisfied.",
+          "optimality": 3.798255050951358e-05,
+          "seconds": 1.8125398326665163,
+          "parameters": {
+            "alpha": 0.5010000005108778,
+            "rho": -0.7435252220997912,
+            "b": -0.7756892413557116,
+            "c": 0.14426640974074617,
+            "gamma": 0.05787906578715397,
+            "v0": 0.03223390161806165,
+            "Lambda": 0.0
+          },
+          "active_mask": [
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "refinement": [
+        {
+          "start": 0,
+          "relative_rmse_pct": 4.499883405908116,
+          "nfev": 2,
+          "status": 2,
+          "message": "`ftol` termination condition is satisfied.",
+          "optimality": 1.952580540278976e-05,
+          "seconds": 0.649595791939646,
+          "parameters": {
+            "alpha": 0.5010000000138921,
+            "rho": -0.7435230644784403,
+            "b": -0.7755931156012995,
+            "c": 0.14425968176095197,
+            "gamma": 0.057873673135272204,
+            "v0": 0.03223422043437877,
+            "Lambda": 0.0
+          },
+          "active_mask": [
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "metrics": {
+        "train": {
+          "n": 132,
+          "rmse_vol_points": 1.4093921256064865,
+          "relative_rmse_pct": 4.49988968959562,
+          "mae_vol_points": 0.9107985568036041,
+          "inside_bid_ask_pct": 9.848484848484848
+        },
+        "strike_holdout": {
+          "n": 44,
+          "rmse_vol_points": 1.4747870575995117,
+          "relative_rmse_pct": 4.455619836445834,
+          "mae_vol_points": 0.9478009522732337,
+          "inside_bid_ask_pct": 13.636363636363635
+        },
+        "maturity_holdout": {
+          "n": 37,
+          "rmse_vol_points": 0.9588446553851604,
+          "relative_rmse_pct": 2.6751531017614476,
+          "mae_vol_points": 0.5341165523978145,
+          "inside_bid_ask_pct": 13.513513513513514
+        },
+        "all": {
+          "n": 213,
+          "rmse_vol_points": 1.3564660128744133,
+          "relative_rmse_pct": 4.2299899015360705,
+          "mae_vol_points": 0.8530092198911605,
+          "inside_bid_ask_pct": 11.267605633802818
+        },
+        "left_tail_holdout": {
+          "n": 33,
+          "rmse_vol_points": 1.8060344656913252,
+          "relative_rmse_pct": 4.170065581293173,
+          "mae_vol_points": 1.2020215785948782,
+          "inside_bid_ask_pct": 12.121212121212121
+        }
+      },
+      "convergence": {
+        "max_abs_iv_vol_points": 3.9814039271002244e-05,
+        "rms_iv_vol_points": 1.2346470288197188e-05
+      },
+      "evaluation_settings": {
+        "steps": 1024,
+        "cutoff": 1600.0,
+        "quad_order": 12,
+        "factor_order": 7
+      }
+    },
+    "rough_hawkes_heston": {
+      "parameters": {
+        "alpha": 0.5010000000343566,
+        "rho": -0.7535835684997889,
+        "b": 1.3363588789674705,
+        "c": 0.038086581200797706,
+        "gamma": 1.0000000000139112e-06,
+        "v0": 0.029783944657147465,
+        "Lambda": 0.5734113457888917
+      },
+      "parameter_count": 7,
+      "multistart": [
+        {
+          "start": 0,
+          "relative_rmse_pct": 2.0737668150451567,
+          "nfev": 29,
+          "status": 2,
+          "message": "`ftol` termination condition is satisfied.",
+          "optimality": 8.342056393715548e-06,
+          "seconds": 5.600386000238359,
+          "parameters": {
+            "alpha": 0.5010000000000001,
+            "rho": -0.753586068909677,
+            "b": 1.3363780127697733,
+            "c": 0.038086678308539325,
+            "gamma": 1.0000135365842979e-06,
+            "v0": 0.029783821054929903,
+            "Lambda": 0.5734156980821372
+          },
+          "active_mask": [
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "start": 1,
+          "relative_rmse_pct": 2.0737668157263958,
+          "nfev": 40,
+          "status": 2,
+          "message": "`ftol` termination condition is satisfied.",
+          "optimality": 1.599053393983664e-06,
+          "seconds": 7.274925332982093,
+          "parameters": {
+            "alpha": 0.5010000000000001,
+            "rho": -0.7535861109807229,
+            "b": 1.336377425879446,
+            "c": 0.03808668777537996,
+            "gamma": 1.000016434844351e-06,
+            "v0": 0.029783826706959504,
+            "Lambda": 0.573415315469411
+          },
+          "active_mask": [
+            -1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "start": 2,
+          "relative_rmse_pct": 2.0737668145967803,
+          "nfev": 29,
+          "status": 2,
+          "message": "`ftol` termination condition is satisfied.",
+          "optimality": 7.36162497533096e-07,
+          "seconds": 5.654427042230964,
+          "parameters": {
+            "alpha": 0.5010000000000001,
+            "rho": -0.7535860738785366,
+            "b": 1.336376821025134,
+            "c": 0.03808669362668679,
+            "gamma": 1.0000000662063266e-06,
+            "v0": 0.029783829693770886,
+            "Lambda": 0.5734155778754493
+          },
+          "active_mask": [
+            -1,
+            0,
+            0,
+            0,
+            -1,
+            0,
+            0
+          ]
+        }
+      ],
+      "refinement": [
+        {
+          "start": 0,
+          "relative_rmse_pct": 2.073779769239589,
+          "nfev": 2,
+          "status": 2,
+          "message": "`ftol` termination condition is satisfied.",
+          "optimality": 3.6416377555191828e-06,
+          "seconds": 0.8634778750129044,
+          "parameters": {
+            "alpha": 0.5010000000343566,
+            "rho": -0.7535835684997889,
+            "b": 1.3363588789674705,
+            "c": 0.038086581200797706,
+            "gamma": 1.0000000000139112e-06,
+            "v0": 0.029783944657147465,
+            "Lambda": 0.5734113457888917
+          },
+          "active_mask": [
+            -1,
+            0,
+            0,
+            0,
+            -1,
+            0,
+            0
+          ]
+        }
+      ],
+      "metrics": {
+        "train": {
+          "n": 132,
+          "rmse_vol_points": 0.5661678902665015,
+          "relative_rmse_pct": 2.0737827778882085,
+          "mae_vol_points": 0.37123384500249645,
+          "inside_bid_ask_pct": 17.424242424242426
+        },
+        "strike_holdout": {
+          "n": 44,
+          "rmse_vol_points": 0.5898623866745435,
+          "relative_rmse_pct": 2.141603719671158,
+          "mae_vol_points": 0.4032859774348912,
+          "inside_bid_ask_pct": 11.363636363636363
+        },
+        "maturity_holdout": {
+          "n": 37,
+          "rmse_vol_points": 0.23758770134811982,
+          "relative_rmse_pct": 1.045630314558084,
+          "mae_vol_points": 0.21961214441534724,
+          "inside_bid_ask_pct": 10.81081081081081
+        },
+        "all": {
+          "n": 213,
+          "rmse_vol_points": 0.5294603124816889,
+          "relative_rmse_pct": 1.9500019367750496,
+          "mae_vol_points": 0.3515169008959277,
+          "inside_bid_ask_pct": 15.023474178403756
+        },
+        "left_tail_holdout": {
+          "n": 33,
+          "rmse_vol_points": 0.6130302138218106,
+          "relative_rmse_pct": 1.4825189382152033,
+          "mae_vol_points": 0.45535320534031687,
+          "inside_bid_ask_pct": 3.0303030303030303
+        }
+      },
+      "convergence": {
+        "max_abs_iv_vol_points": 2.3741449223235733e-05,
+        "rms_iv_vol_points": 8.49358156532395e-06
+      },
+      "evaluation_settings": {
+        "steps": 1024,
+        "cutoff": 1600.0,
+        "quad_order": 12,
+        "factor_order": 7
+      }
+    }
+  }
+}

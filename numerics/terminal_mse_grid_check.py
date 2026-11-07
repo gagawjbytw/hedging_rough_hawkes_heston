@@ -3,8 +3,7 @@
 
 Fine Brownian normals are aggregated to the coarse grid. Both grids reuse the
 same exponential Poisson thresholds and marks, so grid differences have paired
-Monte Carlo standard errors. The default fine-grid random stream matches the
-one used by hedging_performance_experiment.py.
+Monte Carlo standard errors. Each strategy uses its specified initial capital.
 """
 
 from __future__ import annotations
@@ -19,7 +18,6 @@ import numpy as np
 from scipy.optimize import brentq
 from scipy.special import ndtr
 
-import hedging_performance_experiment as hedging
 import original_market_stability as base
 
 
@@ -29,6 +27,66 @@ REGULARIZED = "Kernel hedge eps/T=0.015625, R=80"
 REFERENCE = "Unshifted-kernel hedge, R=80"
 BLACK_SCHOLES = "Black--Scholes delta (implied-vol calibrated)"
 STRATEGIES = ("No hedge", BLACK_SCHOLES, REGULARIZED, REFERENCE)
+
+
+def black_scholes_call(s0: float, strike: float, tau: float, vol: float) -> float:
+    if tau <= 0.0:
+        return max(s0 - strike, 0.0)
+    stdev = vol * math.sqrt(tau)
+    d1 = (math.log(s0 / strike) + 0.5 * stdev**2) / stdev
+    d2 = d1 - stdev
+    return s0 * ndtr(d1) - strike * ndtr(d2)
+
+
+def evaluate_policy(
+    model: base.Model,
+    maturity: float,
+    market: dict,
+    lambdas: np.ndarray,
+    weights: np.ndarray,
+    cutoff: float,
+    epsilon: float,
+    riccati: tuple[np.ndarray, np.ndarray],
+) -> tuple[float, np.ndarray]:
+    """Return Fourier capital and pathwise terminal gain for one hedge."""
+    x = np.asarray(market["x"])
+    stock = np.asarray(market["stock"])
+    dstock = np.asarray(market["dstock"])
+    driver = np.asarray(market["driver"])
+    dz = np.asarray(market["dz"])
+    history = base.integrated_history_statistic(
+        model, driver, maturity, stock.shape[1] - 1, epsilon
+    )
+    dhistory = np.diff(history, axis=1)
+    psi, forcing = riccati
+    u = 0.5 + 1j * lambdas
+    coefficients = base.call_coefficients(lambdas, weights)
+    mask = lambdas <= cutoff + 1.0e-12
+    capital = base.capital_by_cutoff(
+        base.initial_memory(model, forcing, maturity, stock.shape[1] - 1),
+        coefficients,
+        lambdas,
+        np.array([cutoff]),
+    )[0]
+    u_state = np.broadcast_to(
+        base.initial_memory(model, forcing, maturity, stock.shape[1] - 1),
+        (len(stock), len(lambdas)),
+    ).copy()
+    gain = np.zeros(len(stock))
+
+    for k in range(stock.shape[1] - 1):
+        remaining = stock.shape[1] - 1 - k
+        beta, _ = base.projection_beta(model, u, psi[remaining])
+        transformed = base.clipped_exponential(u_state)
+        h_over_s = np.exp((u[None, :] - 1.0) * x[:, k, None]) * transformed
+        node_value = h_over_s * beta[None, :] * coefficients[None, :]
+        theta = 1.0 - np.real(np.sum(node_value[:, mask], axis=1))
+        gain += theta * dstock[:, k]
+        u_state += (
+            psi[remaining][None, :] * dz[:, k, None]
+            - forcing[remaining][None, :] * dhistory[:, k, None]
+        )
+    return float(capital), gain
 
 
 def grid_parameters(model: base.Model, maturity: float, steps: int):
@@ -59,7 +117,7 @@ def grid_parameters(model: base.Model, maturity: float, steps: int):
     capitals["No hedge"] = capitals[REFERENCE]
     capitals[BLACK_SCHOLES] = capitals[REFERENCE]
     implied_vol = brentq(
-        lambda vol: hedging.black_scholes_call(1.0, 1.0, maturity, vol)
+        lambda vol: black_scholes_call(1.0, 1.0, maturity, vol)
         - capitals[REFERENCE],
         1.0e-5, 2.0,
     )
@@ -82,7 +140,7 @@ def evaluate_grid(
     lambdas, weights, riccati, _, implied_vol = parameters
     gains = {"No hedge": np.zeros(len(z1))}
     for name, epsilon in ((REGULARIZED, maturity / 64.0), (REFERENCE, 0.0)):
-        _, gains[name] = hedging.evaluate_policy(
+        _, gains[name] = evaluate_policy(
             model, maturity, market, lambdas, weights, 80.0,
             epsilon, riccati[name],
         )
@@ -155,11 +213,15 @@ def main():
         }
         capitals = parameters[steps][3]
         raw[steps] = (payoff, grid_gains, capitals)
-        summary_rows, _ = hedging.summarize_errors(
-            payoff, grid_gains, capitals, capitals[REFERENCE]
-        )
-        for row in summary_rows:
-            rows.append({"steps": steps, **row})
+        for name in STRATEGIES:
+            squared_loss = (payoff - capitals[name] - grid_gains[name]) ** 2
+            rows.append({
+                "steps": steps,
+                "strategy": name,
+                "capital_from_method": float(capitals[name]),
+                "method_capital_terminal_mse": float(np.mean(squared_loss)),
+                "method_capital_terminal_mse_se": base.standard_error(squared_loss),
+            })
 
     coarse, fine = steps_list
     paired = []
@@ -172,16 +234,10 @@ def main():
             (residual_fine - capitals_fine[name]) ** 2
             - (residual_coarse - capitals_coarse[name]) ** 2
         )
-        centered_difference = (
-            (residual_fine - np.mean(residual_fine)) ** 2
-            - (residual_coarse - np.mean(residual_coarse)) ** 2
-        )
         paired.append({
             "strategy": name,
             "fine_minus_coarse_method_mse": float(np.mean(method_difference)),
             "fine_minus_coarse_method_mse_se": base.standard_error(method_difference),
-            "fine_minus_coarse_centered_mse": float(np.mean(centered_difference)),
-            "fine_minus_coarse_centered_mse_se": base.standard_error(centered_difference),
         })
 
     diagnostic = {}
@@ -222,7 +278,7 @@ def main():
         json.dump(summary, handle, indent=2)
     with (OUT / "terminal_mse_by_grid.csv").open("w", newline="") as handle:
         fieldnames = list(rows[0])
-        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
     print(json.dumps(summary, indent=2))

@@ -1,0 +1,30 @@
+{
+  "repository": "https://github.com/jgatheral/QuadraticRoughHeston",
+  "commit": "761f0ef67f4fc29a8e931a839cdf09e94cbde779",
+  "files": [
+    {
+      "file": "20241219_spx_vol.csv",
+      "url": "https://raw.githubusercontent.com/jgatheral/QuadraticRoughHeston/761f0ef67f4fc29a8e931a839cdf09e94cbde779/data/20241219_spx_vol.csv",
+      "sha256": "8e364933e5a784520aaa297589fa864b5da9a0985cd84379a6b2b8cc235b4f8f",
+      "bytes": 942824
+    },
+    {
+      "file": "20250416_spx_vol.csv",
+      "url": "https://raw.githubusercontent.com/jgatheral/QuadraticRoughHeston/761f0ef67f4fc29a8e931a839cdf09e94cbde779/data/20250416_spx_vol.csv",
+      "sha256": "1982e2ee5a01abbe0a4324b79dea90886c4c2fb83ddffc7f07759f75e15a0754",
+      "bytes": 958606
+    },
+    {
+      "file": "20250620_spx_vol.csv",
+      "url": "https://raw.githubusercontent.com/jgatheral/QuadraticRoughHeston/761f0ef67f4fc29a8e931a839cdf09e94cbde779/data/20250620_spx_vol.csv",
+      "sha256": "2246cc259a50e5bb988129f585335b8e1158993554ee750809751e86c039d342",
+      "bytes": 895980
+    },
+    {
+      "file": "20250702_spx_vol.csv",
+      "url": "https://raw.githubusercontent.com/jgatheral/QuadraticRoughHeston/761f0ef67f4fc29a8e931a839cdf09e94cbde779/data/20250702_spx_vol.csv",
+      "sha256": "ef153193c8693c9cc57466e940f4dd5c9465cc6d6b7c631ac80c94c5b9bc07e3",
+      "bytes": 918135
+    }
+  ]
+}

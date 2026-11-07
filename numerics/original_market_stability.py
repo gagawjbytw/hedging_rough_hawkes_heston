@@ -5,8 +5,7 @@ The stochastic market is generated once with the fractional kernel K_alpha.
 Every regularized hedge is then evaluated on that same (S,V,Z) history.  In
 particular, no variance process or stock associated with K_epsilon is
 simulated.  The script estimates the continuous-market L2(S) distance by
-bracket quadrature, the uniform gain distance, and the combined squared
-capital and strategy distance to a numerical benchmark.
+bracket quadrature and the uniform gain distance at the fixed cutoff R=20.
 
 The outer time discretization follows the integrated-variance Euler idea of
 Richard--Tan--Yang.  Brownian increments and the unit-rate Poisson time-change
@@ -22,10 +21,6 @@ import math
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 from numpy.polynomial.legendre import leggauss
 from scipy.signal import fftconvolve
@@ -34,7 +29,6 @@ from scipy.special import gamma
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "numerics" / "output" / "original_market_stability"
-FIGURES = ROOT / "figures"
 
 
 @dataclass(frozen=True)
@@ -225,9 +219,7 @@ def simulate_original_market(
     martingale_one = np.zeros(paths)
     martingale_two = np.zeros(paths)
     cumulative_marks = np.zeros(paths)
-    running_max_adjustments = 0
     jump_count = 0
-    jump_counts = np.zeros(paths, dtype=np.int64)
     q_mean = model.jump_intensity * (
         1.0 / (1.0 + model.jump_mean * model.jump_leverage) - 1.0
     )
@@ -240,7 +232,6 @@ def simulate_original_market(
         )
         integrated_raw[:, k + 1] = raw_next
         integrated[:, k + 1] = np.maximum(integrated[:, k], raw_next)
-        running_max_adjustments += int(np.count_nonzero(raw_next < integrated[:, k]))
         delta_integrated = integrated[:, k + 1] - integrated[:, k]
 
         event_mask = (thresholds > model.jump_intensity * integrated[:, k, None]) & (
@@ -248,7 +239,6 @@ def simulate_original_market(
         )
         jump_sum = model.jump_mean * np.sum(event_mask * marks, axis=1)
         jump_count += int(np.count_nonzero(event_mask))
-        jump_counts += np.count_nonzero(event_mask, axis=1)
 
         sqrt_delta = np.sqrt(delta_integrated)
         martingale_one += sqrt_delta * z1[:, k]
@@ -278,10 +268,7 @@ def simulate_original_market(
         "integrated_variance_raw": integrated_raw,
         "integrated_variance": integrated,
         "dintegrated_variance": np.diff(integrated, axis=1),
-        "running_max_adjustment_fraction": running_max_adjustments
-        / float(paths * steps),
         "jump_count": jump_count,
-        "jump_counts": jump_counts,
     }
 
 
@@ -328,7 +315,6 @@ def evaluate_strategies(
     dz = np.asarray(market["dz"])
     dintegrated_variance = np.asarray(market["dintegrated_variance"])
     paths = len(x)
-    h = maturity / steps
     u = 0.5 + 1j * lambdas
     coefficients = call_coefficients(lambdas, quad_weights)
     n_kernels = 1 + len(epsilons)
@@ -342,29 +328,12 @@ def evaluate_strategies(
     integrated_history_increments = [
         np.diff(history, axis=1) for history in integrated_histories
     ]
-    reference_gap = float(
-        np.max(
-            np.abs(
-                integrated_histories[0]
-                - np.asarray(market["integrated_variance_raw"])
-            )
-        )
-    )
-
     u0 = [initial_memory(model, forcing, maturity, steps) for _, forcing in riccati]
-    capital = np.stack(
-        [capital_by_cutoff(value, coefficients, lambdas, cutoffs) for value in u0]
-    )
     u_state = [np.broadcast_to(value, (paths, n_nodes)).copy() for value in u0]
 
     l2_same = np.zeros((paths, len(epsilons), n_cutoffs))
-    l2_reference = np.zeros_like(l2_same)
     gain_same = np.zeros_like(l2_same)
-    gain_reference = np.zeros_like(l2_same)
     gain_same_sup = np.zeros_like(l2_same)
-    gain_reference_sup = np.zeros_like(l2_same)
-    memory_sum = np.zeros((len(epsilons), n_nodes))
-    clip_count = np.zeros(len(epsilons))
 
     masks = [lambdas <= cutoff + 1.0e-12 for cutoff in cutoffs]
     d_stock = projection_beta(model, u, riccati[0][0][steps])[1]
@@ -388,19 +357,11 @@ def evaluate_strategies(
         bracket_weight = d_stock * stock[:, k] ** 2 * dintegrated_variance[:, k]
         for e in range(len(epsilons)):
             same_difference = theta[e + 1] - theta[0]
-            reference_difference = theta[e + 1] - theta[0][:, [-1]]
             l2_same[:, e, :] += bracket_weight[:, None] * same_difference**2
-            l2_reference[:, e, :] += bracket_weight[:, None] * reference_difference**2
             gain_same[:, e, :] += same_difference * dstock[:, k, None]
-            gain_reference[:, e, :] += reference_difference * dstock[:, k, None]
             gain_same_sup[:, e, :] = np.maximum(
                 gain_same_sup[:, e, :], gain_same[:, e, :] ** 2
             )
-            gain_reference_sup[:, e, :] = np.maximum(
-                gain_reference_sup[:, e, :], gain_reference[:, e, :] ** 2
-            )
-            memory_sum[e] += np.sum(np.abs(u_state[e + 1] - u_state[0]), axis=0) * h
-            clip_count[e] += float(np.count_nonzero(np.real(u_state[e + 1]) > 0.0))
 
         for j in range(n_kernels):
             psi, forcing = riccati[j]
@@ -412,30 +373,14 @@ def evaluate_strategies(
 
     same_mean = np.mean(l2_same, axis=0)
     same_se = np.std(l2_same, axis=0, ddof=1) / math.sqrt(paths)
-    reference_mean = np.mean(l2_reference, axis=0)
-    reference_se = np.std(l2_reference, axis=0, ddof=1) / math.sqrt(paths)
     gain_same_mean = np.mean(gain_same_sup, axis=0)
     gain_same_se = np.std(gain_same_sup, axis=0, ddof=1) / math.sqrt(paths)
-    gain_reference_mean = np.mean(gain_reference_sup, axis=0)
-    gain_reference_se = np.std(gain_reference_sup, axis=0, ddof=1) / math.sqrt(paths)
-    memory_l1_by_node = memory_sum / paths
 
     return {
-        "capital": capital,
         "l2_same_mean": same_mean,
         "l2_same_se": same_se,
-        "l2_reference_mean": reference_mean,
-        "l2_reference_se": reference_se,
         "gain_same_mean": gain_same_mean,
         "gain_same_se": gain_same_se,
-        "gain_reference_mean": gain_reference_mean,
-        "gain_reference_se": gain_reference_se,
-        "memory_l1_by_node": memory_l1_by_node,
-        "clip_fraction": clip_count / float(paths * steps * n_nodes),
-        "history_reference_gap": reference_gap,
-        "terminal_memory_abs_by_node": np.stack(
-            [np.mean(np.abs(value), axis=0) for value in u_state]
-        ),
         "stock_mean": float(np.mean(stock[:, -1])),
         "stock_se": standard_error(stock[:, -1]),
     }
@@ -462,23 +407,6 @@ def run_grid(
         solve_riccati_product_integration(model, u, maturity, steps, epsilon)
         for epsilon in np.concatenate(([0.0], epsilons))
     ]
-    psi_reference = riccati[0][0]
-    psi_error = np.stack(
-        [
-            np.array(
-                [
-                    float(
-                        np.max(
-                            np.abs(solution[0][:, lambdas <= cutoff + 1.0e-12]
-                                   - psi_reference[:, lambdas <= cutoff + 1.0e-12])
-                        )
-                    )
-                    for cutoff in cutoffs
-                ]
-            )
-            for solution in riccati[1:]
-        ]
-    )
     market = simulate_original_market(
         model, maturity, steps, z1, z2, thresholds, marks
     )
@@ -499,13 +427,6 @@ def run_grid(
         "lambdas": lambdas,
         "cutoffs": cutoffs,
         "epsilons": epsilons,
-        "kernel_l1": np.array(
-            [kernel_l1_error(model.alpha, maturity, epsilon) for epsilon in epsilons]
-        ),
-        "psi_error_by_cutoff": psi_error,
-        "running_max_adjustment_fraction": float(
-            market["running_max_adjustment_fraction"]
-        ),
         "jump_count": int(market["jump_count"]),
         **strategy,
     }
@@ -518,48 +439,23 @@ def write_outputs(
     epsilon_ratios: np.ndarray,
     results: list[dict],
 ):
+    """Write the fixed-cutoff convergence results used in Section 5."""
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    FIGURES.mkdir(parents=True, exist_ok=True)
-    fine = results[-1]
-    fixed_r = int(np.argmin(np.abs(cutoffs - args.fixed_cutoff)))
-    reference_r = len(cutoffs) - 1
-    diagonal_index = np.arange(len(epsilon_ratios))
-    if len(diagonal_index) != len(cutoffs):
-        raise ValueError("epsilon ratios and cutoffs must have equal length")
-
     rows = []
     for result in results:
-        capital = np.asarray(result["capital"])
         for e, ratio in enumerate(epsilon_ratios):
-            for r, cutoff in enumerate(cutoffs):
-                capital_gap = capital[e + 1, r] - capital[0, reference_r]
-                reference_distance_squared = (
-                    capital_gap**2 + result["l2_reference_mean"][e, r]
-                )
-                rows.append(
-                    {
-                        "steps": result["steps"],
-                        "epsilon_over_T": ratio,
-                        "epsilon": result["epsilons"][e],
-                        "cutoff": cutoff,
-                        "kernel_l1_error": result["kernel_l1"][e],
-                        "riccati_sup_error": result["psi_error_by_cutoff"][e, r],
-                        "memory_l1_sup": result["memory_l1_by_cutoff"][e, r],
-                        "strategy_l2_same_cutoff": result["l2_same_mean"][e, r],
-                        "strategy_l2_same_cutoff_se": result["l2_same_se"][e, r],
-                        "gain_sup_same_cutoff": result["gain_same_mean"][e, r],
-                        "gain_sup_same_cutoff_se": result["gain_same_se"][e, r],
-                        "strategy_l2_reference": result["l2_reference_mean"][e, r],
-                        "strategy_l2_reference_se": result["l2_reference_se"][e, r],
-                        "capital": capital[e + 1, r],
-                        "reference_capital": capital[0, reference_r],
-                        "capital_gap_squared": capital_gap**2,
-                        "capital_strategy_distance_squared": reference_distance_squared,
-                        "clip_fraction": result["clip_fraction"][e],
-                    }
-                )
+            rows.append({
+                "steps": result["steps"],
+                "epsilon_over_T": ratio,
+                "epsilon": result["epsilons"][e],
+                "cutoff": float(cutoffs[0]),
+                "strategy_l2_same_cutoff": result["l2_same_mean"][e, 0],
+                "strategy_l2_same_cutoff_se": result["l2_same_se"][e, 0],
+                "gain_sup_same_cutoff": result["gain_same_mean"][e, 0],
+                "gain_sup_same_cutoff_se": result["gain_same_se"][e, 0],
+            })
     with (OUTPUT / "convergence.csv").open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
 
@@ -572,153 +468,18 @@ def write_outputs(
             "maturity": args.maturity,
             "seed": args.seed,
             "fourier_order_per_panel": args.fourier_order,
-            "cutoffs": cutoffs.tolist(),
+            "fixed_cutoff": float(cutoffs[0]),
             "epsilon_over_T": epsilon_ratios.tolist(),
-            "fixed_cutoff": args.fixed_cutoff,
         },
         "model": asdict(model),
-        "fine_grid": {
-            "stock_mean": fine["stock_mean"],
-            "stock_se": fine["stock_se"],
-            "running_max_adjustment_fraction": fine[
-                "running_max_adjustment_fraction"
-            ],
-            "jump_count": fine["jump_count"],
-            "history_reference_gap": fine["history_reference_gap"],
-            "terminal_memory_mean_abs_fixed_cutoff": np.max(
-                fine["terminal_memory_abs_by_node"][:,
-                    fine["lambdas"] <= args.fixed_cutoff + 1.0e-12],
-                axis=1,
-            ).tolist(),
-            "reference_capital_by_cutoff": fine["capital"][0].tolist(),
-            "kernel_l1_error": fine["kernel_l1"].tolist(),
-            "riccati_sup_error_fixed_cutoff": fine["psi_error_by_cutoff"][:, fixed_r].tolist(),
-            "memory_l1_sup_fixed_cutoff": fine["memory_l1_by_cutoff"][:, fixed_r].tolist(),
-            "clip_fraction": fine["clip_fraction"].tolist(),
-            "fixed_cutoff_strategy_l2": fine["l2_same_mean"][:, fixed_r].tolist(),
-            "fixed_cutoff_strategy_l2_se": fine["l2_same_se"][:, fixed_r].tolist(),
-            "fixed_cutoff_gain_sup": fine["gain_same_mean"][:, fixed_r].tolist(),
-            "fixed_cutoff_gain_sup_se": fine["gain_same_se"][:, fixed_r].tolist(),
-            "diagonal": [],
-        },
-        "grid_comparison": [],
+        "stock_diagnostics": [
+            {"steps": r["steps"], "stock_mean": r["stock_mean"],
+             "stock_se": r["stock_se"], "jump_count": r["jump_count"]}
+            for r in results
+        ],
     }
-    for e, r in enumerate(diagonal_index):
-        cap_gap = fine["capital"][e + 1, r] - fine["capital"][0, reference_r]
-        summary["fine_grid"]["diagonal"].append(
-            {
-                "epsilon_over_T": float(epsilon_ratios[e]),
-                "cutoff": float(cutoffs[r]),
-                "capital": float(fine["capital"][e + 1, r]),
-                "capital_gap_squared": float(cap_gap**2),
-                "strategy_l2_reference": float(fine["l2_reference_mean"][e, r]),
-                "strategy_l2_reference_se": float(fine["l2_reference_se"][e, r]),
-                "gain_sup_reference": float(fine["gain_reference_mean"][e, r]),
-                "gain_sup_reference_se": float(fine["gain_reference_se"][e, r]),
-                "capital_strategy_distance_squared": float(
-                    cap_gap**2 + fine["l2_reference_mean"][e, r]
-                ),
-            }
-        )
-    probe_e = len(epsilon_ratios) - 2
-    probe_r = fixed_r
-    for result in results:
-        summary["grid_comparison"].append(
-            {
-                "steps": result["steps"],
-                "epsilon_over_T": float(epsilon_ratios[probe_e]),
-                "cutoff": float(cutoffs[probe_r]),
-                "strategy_l2_same_cutoff": float(result["l2_same_mean"][probe_e, probe_r]),
-                "strategy_l2_same_cutoff_se": float(result["l2_same_se"][probe_e, probe_r]),
-                "gain_sup_same_cutoff": float(result["gain_same_mean"][probe_e, probe_r]),
-                "gain_sup_same_cutoff_se": float(result["gain_same_se"][probe_e, probe_r]),
-                "stock_mean": float(result["stock_mean"]),
-                "stock_se": float(result["stock_se"]),
-                "running_max_adjustment_fraction": float(
-                    result["running_max_adjustment_fraction"]
-                ),
-                "jump_count": int(result["jump_count"]),
-            }
-        )
     with (OUTPUT / "summary.json").open("w") as handle:
         json.dump(summary, handle, indent=2)
-
-    x_kernel = fine["kernel_l1"]
-    plt.rcParams.update(
-        {
-            "font.size": 12,
-            "axes.titlesize": 13,
-            "axes.labelsize": 12,
-            "xtick.labelsize": 10,
-            "ytick.labelsize": 10,
-            "legend.fontsize": 10,
-        }
-    )
-    figure, axes = plt.subplots(1, 3, figsize=(10.2, 3.4))
-    axes[0].loglog(
-        x_kernel,
-        fine["psi_error_by_cutoff"][:, fixed_r],
-        "o-",
-        label=r"Riccati $\sup$ error",
-    )
-    axes[0].loglog(
-        x_kernel,
-        fine["memory_l1_by_cutoff"][:, fixed_r],
-        "s-",
-        label=r"memory $L^1$ error",
-    )
-    axes[0].set_xlabel(r"$\|K_\varepsilon-K\|_{L^1(0,T)}$")
-    axes[0].set_ylabel("estimated error")
-    axes[0].set_title("Deterministic and memory terms")
-    axes[0].legend(frameon=False)
-
-    axes[1].loglog(
-        x_kernel,
-        fine["l2_same_mean"][:, fixed_r],
-        "o-",
-        label=r"$\|\vartheta_{\varepsilon,R}-\vartheta_R\|_{L^2(S)}^2$",
-    )
-    axes[1].fill_between(
-        x_kernel,
-        np.maximum(
-            fine["l2_same_mean"][:, fixed_r] - 1.96 * fine["l2_same_se"][:, fixed_r],
-            1.0e-18,
-        ),
-        fine["l2_same_mean"][:, fixed_r] + 1.96 * fine["l2_same_se"][:, fixed_r],
-        alpha=0.18,
-    )
-    axes[1].loglog(
-        x_kernel,
-        fine["gain_same_mean"][:, fixed_r],
-        "s-",
-        label=r"$\mathbb{E}\sup_t|G_{\varepsilon,R}-G_R|^2$",
-    )
-    axes[1].set_xlabel(r"$\|K_\varepsilon-K\|_{L^1(0,T)}$")
-    axes[1].set_title(fr"Fixed Fourier cutoff $R={cutoffs[fixed_r]:g}$")
-    axes[1].legend(frameon=False)
-
-    diagonal = summary["fine_grid"]["diagonal"]
-    indices = np.arange(len(diagonal))
-    strategy_component = np.array([row["strategy_l2_reference"] for row in diagonal])
-    capital_component = np.array([row["capital_gap_squared"] for row in diagonal])
-    total = np.array([row["capital_strategy_distance_squared"] for row in diagonal])
-    axes[2].semilogy(indices, strategy_component, "o-", label="strategy component")
-    axes[2].semilogy(indices, capital_component, "^-", label="capital component")
-    axes[2].semilogy(indices, total, "s-", label="total squared distance")
-    axes[2].set_xticks(
-        indices,
-        [fr"$2^{{-{int(round(-math.log2(ratio)))}}},{cutoffs[i]:g}$" for i, ratio in enumerate(epsilon_ratios)],
-        rotation=25,
-    )
-    axes[2].set_xlabel(r"$(\varepsilon/T,R)$")
-    axes[2].set_title("Fourier diagonal")
-    axes[2].legend(frameon=False)
-
-    for axis in axes:
-        axis.grid(alpha=0.2)
-    figure.tight_layout()
-    figure.savefig(FIGURES / "original_market_stability.pdf", bbox_inches="tight")
-    plt.close(figure)
 
 
 def parse_args() -> argparse.Namespace:
@@ -729,7 +490,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--maturity", type=float, default=0.25)
     parser.add_argument("--seed", type=int, default=20260907)
     parser.add_argument("--fourier-order", type=int, default=4)
-    parser.add_argument("--fixed-cutoff", type=float, default=20.0)
     parser.add_argument("--max-events", type=int, default=8)
     return parser.parse_args()
 
@@ -742,10 +502,9 @@ def main():
         raise ValueError("at least two paths are required")
     np.seterr(over="raise", invalid="raise", divide="raise")
     model = Model()
-    cutoffs = np.array([5.0, 10.0, 20.0, 40.0, 80.0])
+    cutoffs = np.array([20.0])
     fourier_panels = np.array(
-        [0.5, 1.0, 2.0, 3.5, 5.0, 7.5, 10.0, 15.0, 20.0,
-         30.0, 40.0, 60.0, 80.0]
+        [0.5, 1.0, 2.0, 3.5, 5.0, 7.5, 10.0, 15.0, 20.0]
     )
     epsilon_ratios = np.array([0.25, 0.125, 0.0625, 0.03125, 0.015625])
     lambdas, quad_weights = fourier_rule(args.fourier_order, fourier_panels)
@@ -804,42 +563,13 @@ def pool_batches(batches: list[dict], stop_count: int) -> dict:
     pooled = dict(batches[0])
     for mean_key, se_key in (
         ("l2_same_mean", "l2_same_se"),
-        ("l2_reference_mean", "l2_reference_se"),
         ("gain_same_mean", "gain_same_se"),
-        ("gain_reference_mean", "gain_reference_se"),
     ):
         pooled[mean_key], pooled[se_key] = pool_mean_se(
             [np.asarray(batch[mean_key]) for batch in batches],
             [np.asarray(batch[se_key]) for batch in batches],
             sizes,
         )
-    memory_by_node = sum(
-        size * np.asarray(batch["memory_l1_by_node"])
-        for size, batch in zip(sizes, batches)
-    ) / stop_count
-    pooled["memory_l1_by_node"] = memory_by_node
-    pooled["memory_l1_by_cutoff"] = np.stack(
-        [
-            np.max(memory_by_node[:, pooled["lambdas"] <= cutoff + 1.0e-12], axis=1)
-            for cutoff in pooled["cutoffs"]
-        ],
-        axis=1,
-    )
-    pooled["clip_fraction"] = sum(
-        size * np.asarray(batch["clip_fraction"])
-        for size, batch in zip(sizes, batches)
-    ) / stop_count
-    pooled["history_reference_gap"] = max(
-        float(batch["history_reference_gap"]) for batch in batches
-    )
-    pooled["terminal_memory_abs_by_node"] = sum(
-        size * np.asarray(batch["terminal_memory_abs_by_node"])
-        for size, batch in zip(sizes, batches)
-    ) / stop_count
-    pooled["running_max_adjustment_fraction"] = sum(
-        size * float(batch["running_max_adjustment_fraction"])
-        for size, batch in zip(sizes, batches)
-    ) / stop_count
     pooled["jump_count"] = sum(int(batch["jump_count"]) for batch in batches)
     stock_mean, stock_se = pool_mean_se(
         [np.asarray(batch["stock_mean"]) for batch in batches],
